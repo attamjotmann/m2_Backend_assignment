@@ -159,4 +159,58 @@ describe("Ticket Routes", (): void => {
             expect(getResponse.status).toBe(404);
         });
     });
+
+    describe("GET /api/v1/tickets/:id/urgency", (): void => {
+        it("should handle active, resolved, and missing tickets", async (): Promise<void> => {
+            // Arrange
+            const activeTicketId: number = 6;
+            const resolvedTicketId: number = 7;
+            const missingTicketId: number = 999;
+
+            // Act
+            const activeResponse: Response = await request(app).get(
+                `/api/v1/tickets/${activeTicketId}/urgency`
+            );
+
+            const resolvedResponse: Response = await request(app).get(
+                `/api/v1/tickets/${resolvedTicketId}/urgency`
+            );
+
+            const missingResponse: Response = await request(app).get(
+                `/api/v1/tickets/${missingTicketId}/urgency`
+            );
+
+            // Assert
+            expect(activeResponse.status).toBe(200);
+            expect(activeResponse.body.message).toBe(
+                "Ticket urgency calculated"
+            );
+            expect(activeResponse.body.data.id).toBe(6);
+            expect(activeResponse.body.data.ticketAge).toBe(6);
+            expect(activeResponse.body.data.urgencyScore).toBe(80);
+            expect(activeResponse.body.data.urgencyLevel).toBe(
+                "Critical. Immediate attention required."
+            );
+            expect(activeResponse.body.data).not.toHaveProperty(
+                "description"
+            );
+
+            expect(resolvedResponse.status).toBe(200);
+            expect(resolvedResponse.body.message).toBe(
+                "Ticket urgency calculated"
+            );
+            expect(resolvedResponse.body.data.id).toBe(7);
+            expect(resolvedResponse.body.data.status).toBe("resolved");
+            expect(resolvedResponse.body.data.ticketAge).toBe(10);
+            expect(resolvedResponse.body.data.urgencyScore).toBe(0);
+            expect(resolvedResponse.body.data.urgencyLevel).toBe(
+                "Minimal. Ticket resolved."
+            );
+
+            expect(missingResponse.status).toBe(404);
+            expect(missingResponse.body).toEqual({
+                message: "Ticket not found",
+            });
+        });
+    });
 });
