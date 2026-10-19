@@ -6,6 +6,7 @@ import {
     createTicketController,
     updateTicketController,
     deleteTicketController,
+    getTicketUrgencyController,
 } from "../controllers/ticketController";
 
 // Initialize the router for support ticket endpoints
@@ -13,6 +14,9 @@ const ticketRoutes: Router = Router();
 
 // Retrieve all support tickets
 ticketRoutes.get("/", getAllTicketsController);
+
+// Retrieve a ticket with its calculated urgency
+ticketRoutes.get("/:id/urgency", getTicketUrgencyController);
 
 // Retrieve a support ticket by ID
 ticketRoutes.get("/:id", getTicketByIdController);
