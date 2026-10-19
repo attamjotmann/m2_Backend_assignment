@@ -2,6 +2,7 @@
 import { tickets } from "../../../data/ticketData";
 import {
     Ticket,
+    TicketStatus,
     CreateTicketInput,
     UpdateTicketInput,
 } from "../../../data/ticketTypes";
@@ -12,6 +13,16 @@ import {
     URGENCY_THRESHOLDS,
     URGENCY_MESSAGES,
 } from "../../../constants/urgencyConstants";
+
+/**
+ * Represents the urgency information returned for a ticket.
+ * Excludes the ticket description.
+ */
+export type TicketUrgencyResult = Omit<Ticket, "description"> & {
+    ticketAge: number;
+    urgencyScore: number;
+    urgencyLevel: string;
+};
 
 // Track the next available ticket ID
 let nextTicketId: number =
@@ -132,6 +143,7 @@ export const calculateTicketAge = (
 
 /**
  * Calculates an urgency score using ticket priority and age.
+ * Resolved tickets always have an urgency score of zero.
  * @param ticket - Support ticket to evaluate
  * @param referenceTime - Time used to calculate ticket age
  * @returns Calculated numerical urgency score
@@ -140,6 +152,10 @@ export const calculateUrgencyScore = (
     ticket: Ticket,
     referenceTime: number = Date.now()
 ): number => {
+    if (ticket.status === "resolved") {
+        return 0;
+    }
+
     const baseScore: number = PRIORITY_BASE_SCORES[ticket.priority];
 
     const ticketAge: number = calculateTicketAge(
@@ -154,11 +170,19 @@ export const calculateUrgencyScore = (
 };
 
 /**
- * Determines the urgency level message from a numerical score.
+ * Determines the urgency level message from a score and status.
  * @param urgencyScore - Calculated urgency score
+ * @param status - Current ticket status
  * @returns The corresponding urgency level message
  */
-export const getUrgencyLevel = (urgencyScore: number): string => {
+export const getUrgencyLevel = (
+    urgencyScore: number,
+    status: TicketStatus = "open"
+): string => {
+    if (status === "resolved") {
+        return URGENCY_MESSAGES.RESOLVED;
+    }
+
     if (urgencyScore >= URGENCY_THRESHOLDS.CRITICAL) {
         return URGENCY_MESSAGES.CRITICAL;
     }
@@ -172,4 +196,49 @@ export const getUrgencyLevel = (urgencyScore: number): string => {
     }
 
     return URGENCY_MESSAGES.LOW;
+};
+
+/**
+ * Retrieves a ticket with its calculated urgency information.
+ * @param id - ID of the ticket to evaluate
+ * @returns Ticket urgency information or undefined if not found
+ */
+export const getTicketUrgency = (
+    id: number
+): TicketUrgencyResult | undefined => {
+    const ticket: Ticket | undefined = getTicketById(id);
+
+    if (ticket === undefined) {
+        return undefined;
+    }
+
+    const referenceTime: number = Date.now();
+
+    const ticketAge: number = calculateTicketAge(
+        ticket.createdAt,
+        referenceTime
+    );
+
+    const urgencyScore: number = calculateUrgencyScore(
+        ticket,
+        referenceTime
+    );
+
+    const urgencyLevel: string = getUrgencyLevel(
+        urgencyScore,
+        ticket.status
+    );
+
+    const result: TicketUrgencyResult = {
+        id: ticket.id,
+        title: ticket.title,
+        priority: ticket.priority,
+        status: ticket.status,
+        createdAt: ticket.createdAt,
+        ticketAge: ticketAge,
+        urgencyScore: urgencyScore,
+        urgencyLevel: urgencyLevel,
+    };
+
+    return result;
 };
