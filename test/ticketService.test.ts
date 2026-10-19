@@ -2,6 +2,7 @@
 import {
     calculateTicketAge,
     calculateUrgencyScore,
+    getUrgencyLevel,
 } from "../src/api/v1/services/ticketService";
 import {
     Ticket,
@@ -38,7 +39,7 @@ const createTestTicket = (
 };
 
 describe("Ticket Urgency Calculation", (): void => {
-    it("should calculate a low priority ticket score", (): void => {
+    it("should calculate low urgency correctly", (): void => {
         // Arrange
         const ticket: Ticket = createTestTicket("low", 3);
 
@@ -47,18 +48,21 @@ describe("Ticket Urgency Calculation", (): void => {
             ticket.createdAt,
             referenceTime
         );
-
         const score: number = calculateUrgencyScore(
             ticket,
             referenceTime
         );
+        const level: string = getUrgencyLevel(score);
 
         // Assert
         expect(age).toBe(3);
         expect(score).toBe(25);
+        expect(level).toBe(
+            "Low urgency: Address when capacity allows."
+        );
     });
 
-    it("should calculate a medium priority ticket score", (): void => {
+    it("should calculate moderate urgency correctly", (): void => {
         // Arrange
         const ticket: Ticket = createTestTicket("medium", 6);
 
@@ -67,12 +71,16 @@ describe("Ticket Urgency Calculation", (): void => {
             ticket,
             referenceTime
         );
+        const level: string = getUrgencyLevel(score);
 
         // Assert
         expect(score).toBe(50);
+        expect(level).toBe(
+            "Moderate. Schedule for attention."
+        );
     });
 
-    it("should calculate a high priority ticket score", (): void => {
+    it("should calculate high urgency correctly", (): void => {
         // Arrange
         const ticket: Ticket = createTestTicket("high", 9);
 
@@ -81,12 +89,16 @@ describe("Ticket Urgency Calculation", (): void => {
             ticket,
             referenceTime
         );
+        const level: string = getUrgencyLevel(score);
 
         // Assert
         expect(score).toBe(75);
+        expect(level).toBe(
+            "High urgency. Prioritize resolution."
+        );
     });
 
-    it("should calculate a critical priority ticket score", (): void => {
+    it("should calculate critical urgency correctly", (): void => {
         // Arrange
         const ticket: Ticket = createTestTicket("critical", 6);
 
@@ -95,8 +107,12 @@ describe("Ticket Urgency Calculation", (): void => {
             ticket,
             referenceTime
         );
+        const level: string = getUrgencyLevel(score);
 
         // Assert
         expect(score).toBe(80);
+        expect(level).toBe(
+            "Critical. Immediate attention required."
+        );
     });
 });
