@@ -16,3 +16,28 @@ export const PRIORITY_BASE_SCORES: Record<TicketPriority, number> = {
     medium: 20,
     low: 10,
 };
+
+/**
+ * Urgency thresholds based on the demonstrated ticket scores.
+ */
+export const URGENCY_THRESHOLDS: Record<
+    "MODERATE" | "HIGH" | "CRITICAL",
+    number
+> = {
+    MODERATE: 30,
+    HIGH: 55,
+    CRITICAL: 80,
+};
+
+/**
+ * Urgency messages shown in the assignment demonstration.
+ */
+export const URGENCY_MESSAGES: Record<
+    "LOW" | "MODERATE" | "HIGH" | "CRITICAL",
+    string
+> = {
+    LOW: "Low urgency: Address when capacity allows.",
+    MODERATE: "Moderate. Schedule for attention.",
+    HIGH: "High urgency. Prioritize resolution.",
+    CRITICAL: "Critical. Immediate attention required.",
+};
