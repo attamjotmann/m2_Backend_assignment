@@ -14,6 +14,8 @@ import {
     createTicket,
     updateTicket,
     deleteTicket,
+    getTicketUrgency,
+    TicketUrgencyResult,
 } from "../services/ticketService";
 
 /**
@@ -241,5 +243,33 @@ export const deleteTicketController = (
 
     res.status(HTTP_STATUS.OK).json({
         message: "Ticket deleted",
+    });
+};
+
+/**
+ * Handles the request to calculate ticket urgency.
+ * @param req - Incoming HTTP request containing the ticket ID
+ * @param res - HTTP response
+ * @returns Nothing; sends ticket urgency information or a 404 error
+ */
+export const getTicketUrgencyController = (
+    req: Request,
+    res: Response
+): void => {
+    const id: number = Number(req.params.id);
+
+    const urgencyData: TicketUrgencyResult | undefined =
+        getTicketUrgency(id);
+
+    if (urgencyData === undefined) {
+        res.status(HTTP_STATUS.NOT_FOUND).json({
+            message: "Ticket not found",
+        });
+        return;
+    }
+
+    res.status(HTTP_STATUS.OK).json({
+        message: "Ticket urgency calculated",
+        data: urgencyData,
     });
 };
