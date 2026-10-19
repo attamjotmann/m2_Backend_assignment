@@ -1,4 +1,3 @@
-
 /**
  * Defines the allowed priority levels for support tickets.
  */
@@ -20,3 +19,18 @@ export interface Ticket {
     status: TicketStatus;
     createdAt: string;
 }
+
+/**
+ * Defines the fields required when creating a ticket.
+ */
+export type CreateTicketInput = Pick<
+    Ticket,
+    "title" | "description" | "priority"
+>;
+
+/**
+ * Defines the fields that can be updated on a ticket.
+ */
+export type UpdateTicketInput = Partial<
+    Pick<Ticket, "title" | "description" | "priority" | "status">
+>;
