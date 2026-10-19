@@ -1,6 +1,8 @@
+
 // import the express application and type definition
 import express, { Express, Request, Response } from "express";
 import morgan from "morgan";
+import ticketRoutes from "./api/v1/routes/ticketRoutes";
 
 // initialize the express application
 const app: Express = express();
@@ -10,6 +12,9 @@ app.use(morgan("combined"));
 
 // Configure middleware to parse JSON request bodies
 app.use(express.json());
+
+// Mount the support ticket routes
+app.use("/api/v1/tickets", ticketRoutes);
 
 // Interface for health check response
 interface HealthCheckResponse {
