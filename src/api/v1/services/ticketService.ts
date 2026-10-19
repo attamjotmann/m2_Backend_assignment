@@ -9,6 +9,8 @@ import {
     MILLISECONDS_PER_DAY,
     URGENCY_POINTS_PER_DAY,
     PRIORITY_BASE_SCORES,
+    URGENCY_THRESHOLDS,
+    URGENCY_MESSAGES,
 } from "../../../constants/urgencyConstants";
 
 // Track the next available ticket ID
@@ -149,4 +151,25 @@ export const calculateUrgencyScore = (
         baseScore + ticketAge * URGENCY_POINTS_PER_DAY;
 
     return urgencyScore;
+};
+
+/**
+ * Determines the urgency level message from a numerical score.
+ * @param urgencyScore - Calculated urgency score
+ * @returns The corresponding urgency level message
+ */
+export const getUrgencyLevel = (urgencyScore: number): string => {
+    if (urgencyScore >= URGENCY_THRESHOLDS.CRITICAL) {
+        return URGENCY_MESSAGES.CRITICAL;
+    }
+
+    if (urgencyScore >= URGENCY_THRESHOLDS.HIGH) {
+        return URGENCY_MESSAGES.HIGH;
+    }
+
+    if (urgencyScore >= URGENCY_THRESHOLDS.MODERATE) {
+        return URGENCY_MESSAGES.MODERATE;
+    }
+
+    return URGENCY_MESSAGES.LOW;
 };
