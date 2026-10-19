@@ -33,11 +33,12 @@ export const URGENCY_THRESHOLDS: Record<
  * Urgency messages shown in the assignment demonstration.
  */
 export const URGENCY_MESSAGES: Record<
-    "LOW" | "MODERATE" | "HIGH" | "CRITICAL",
+    "LOW" | "MODERATE" | "HIGH" | "CRITICAL" | "RESOLVED",
     string
 > = {
     LOW: "Low urgency: Address when capacity allows.",
     MODERATE: "Moderate. Schedule for attention.",
     HIGH: "High urgency. Prioritize resolution.",
     CRITICAL: "Critical. Immediate attention required.",
+    RESOLVED: "Minimal. Ticket resolved.",
 };
