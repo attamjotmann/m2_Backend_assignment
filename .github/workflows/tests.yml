@@ -1,0 +1,39 @@
+
+name: Backend Tests
+
+on:
+  push:
+    branches:
+      - development
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Download repository code
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Configure Node.js for the project
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20.x"
+          cache: "npm"
+
+      # Install dependencies from package-lock.json
+      - name: Install project dependencies
+        run: npm ci
+
+      # Compile the TypeScript application
+      - name: Build TypeScript
+        run: npm run build
+
+      # Execute the automated Jest tests
+      - name: Run Jest tests
+        run: npm test -- --runInBand
