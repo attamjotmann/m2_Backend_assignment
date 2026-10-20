@@ -72,7 +72,11 @@ describe("Ticket Routes", (): void => {
     describe("POST /api/v1/tickets", (): void => {
         it("should create a new support ticket", async (): Promise<void> => {
             // Arrange
-            const newTicket = {
+            const newTicket: {
+                title: string;
+                description: string;
+                priority: string;
+            } = {
                 title: "Test ticket",
                 description: "Testing ticket creation",
                 priority: "medium",
@@ -93,7 +97,11 @@ describe("Ticket Routes", (): void => {
 
         it("should reject invalid ticket priority", async (): Promise<void> => {
             // Arrange
-            const invalidTicket = {
+            const invalidTicket: {
+                title: string;
+                description: string;
+                priority: string;
+            } = {
                 title: "Invalid priority test",
                 description: "Testing validation",
                 priority: "urgent",
@@ -117,7 +125,10 @@ describe("Ticket Routes", (): void => {
             // Arrange
             const ticketId: number = 1;
 
-            const updates = {
+            const updates: {
+                priority: string;
+                status: string;
+            } = {
                 priority: "high",
                 status: "in-progress",
             };
